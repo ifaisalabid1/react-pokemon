@@ -1,17 +1,24 @@
 const PokeCard = ({ currPokemon }: any) => {
+  interface pokemonStat {
+    base_stat: number
+    stat: {
+      name: string
+    }
+  }
+
   return (
     <div className='shadow-xl card bg-base-100'>
-      <figure>
+      <figure className='bg-gradient-to-b from-[#009FFF] to-[#ec2F4B] h-64'>
         <img
           src={currPokemon.sprites.other.dream_world.front_default}
           alt={currPokemon.name}
         />
       </figure>
       <div className='card-body'>
-        <h2 className='capitalize card-title'>{currPokemon.name}</h2>
+        <h2 className='mx-auto capitalize card-title'>{currPokemon.name}</h2>
 
         <div className='mt-6'>
-          {currPokemon.stats.map((pokemonStat: any) => (
+          {currPokemon.stats.map((pokemonStat: pokemonStat) => (
             <div
               className='flex items-center gap-4 text-sm'
               key={pokemonStat.stat.name}

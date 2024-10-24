@@ -1,4 +1,4 @@
-const pokemonIndex = (index: number) => {
+const getPokemonIndex = (index: number) => {
   if (index < 10) {
     return `00${index}`
   } else if (index < 100) {
@@ -8,4 +8,4 @@ const pokemonIndex = (index: number) => {
   }
 }
 
-export { pokemonIndex }
+export { getPokemonIndex }

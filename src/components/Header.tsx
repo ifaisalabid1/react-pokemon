@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { AlignJustify, MoveLeft } from 'lucide-react'
 import { useState } from 'react'
-import { pokemonIndex } from '../utils'
+import { getPokemonIndex } from '../utils'
 
 const Header = () => {
   const [showMenu, setShowMenu] = useState(false)
@@ -40,7 +40,7 @@ const Header = () => {
             <nav className='mt-6'>
               <ul>
                 <li>
-                  <button>{pokemonIndex(12)}</button>
+                  <button>{getPokemonIndex(12)}</button>
                 </li>
               </ul>
             </nav>

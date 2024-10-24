@@ -10,18 +10,49 @@ import Pagination from './components/Pagination'
 import { useEffect, useState } from 'react'
 
 const App = () => {
-  const [loading, setLoading] = useState(true)
-  const [data, setData] = useState(null)
-  const [selectedPokemon, setSelectedPokemon] = useState([])
-  const baseUrl = 'https://pokeapi.co/api/v2'
-  const suffix = '/pokemon/' + selectedPokemon
-  const finalUrl = baseUrl + suffix
+  const [allPokemon, setAllPokemon] = useState<singlePokemon[]>([])
+  const [loading, setLoading] = useState(false)
+  interface singlePokemon {
+    url: string
+    name: string
+  }
+
+  const API = 'https://pokeapi.co/api/v2/pokemon/?limit=20'
+
+  const fetchAllPokemon = async () => {
+    setLoading(true)
+
+    try {
+      const res = await fetch(API)
+      const allPokemonData = await res.json()
+
+      const singlePokemonData = allPokemonData.results.map(
+        async (singlePokemon: singlePokemon) => {
+          const res = await fetch(singlePokemon.url)
+          const singlePokemonData = await res.json()
+          return singlePokemonData
+        }
+      )
+
+      const singlePokemonRes = await Promise.all(singlePokemonData)
+
+      setAllPokemon(singlePokemonRes)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchAllPokemon()
+  })
 
   return (
     <>
       <Header />
       <SearchPokemon />
-      <PokeCardList />
+      <PokeCardList allPokemon={allPokemon} />
       <Pagination />
     </>
   )

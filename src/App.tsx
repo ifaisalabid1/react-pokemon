@@ -10,49 +10,48 @@ import Pagination from './components/Pagination'
 import { useEffect, useState } from 'react'
 
 const App = () => {
-  const [allPokemon, setAllPokemon] = useState<singlePokemon[]>([])
-  const [loading, setLoading] = useState(false)
-  interface singlePokemon {
-    url: string
+  interface currPokemon {
     name: string
+    url: string
   }
+  const [loading, setLoading] = useState(false)
+  const [pokemon, setPokemon] = useState<any[]>([])
+  const [error, setError] = useState<any>(null)
+  const API = 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20'
 
-  const API = 'https://pokeapi.co/api/v2/pokemon/?limit=20'
-
-  const fetchAllPokemon = async () => {
+  const fetchPokemonData = async () => {
     setLoading(true)
-
     try {
       const res = await fetch(API)
-      const allPokemonData = await res.json()
+      const data = await res.json()
 
-      const singlePokemonData = allPokemonData.results.map(
-        async (singlePokemon: singlePokemon) => {
-          const res = await fetch(singlePokemon.url)
-          const singlePokemonData = await res.json()
-          return singlePokemonData
+      const currPokemonData = data.results.map(
+        async (currPokemon: currPokemon) => {
+          const res = await fetch(currPokemon.url)
+          const data = await res.json()
+          return data
         }
       )
 
-      const singlePokemonRes = await Promise.all(singlePokemonData)
+      const pokemonData = await Promise.all(currPokemonData)
 
-      setAllPokemon(singlePokemonRes)
-    } catch (err) {
-      console.log(err)
-    } finally {
+      setPokemon(pokemonData)
       setLoading(false)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+      setError(error)
     }
   }
 
   useEffect(() => {
-    fetchAllPokemon()
-  })
-
+    fetchPokemonData()
+  }, [])
   return (
     <>
       <Header />
       <SearchPokemon />
-      <PokeCardList allPokemon={allPokemon} />
+      <PokeCardList pokemon={pokemon} loading={loading} error={error} />
       <Pagination />
     </>
   )

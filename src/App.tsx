@@ -16,14 +16,23 @@ const App = () => {
   }
   const [loading, setLoading] = useState(false)
   const [pokemon, setPokemon] = useState<any[]>([])
-  const [error, setError] = useState<any>(null)
-  const API = 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20'
+  const [error, setError] = useState<Error | null>(null)
+  const [page, setPage] = useState(1)
+  const [totalPokemon, setTotalPokemon] = useState(0)
+  const limit = 8
+  const totalPages = Math.ceil(totalPokemon / limit)
+  const offset = limit * (page - 1)
+
+  const API = `https://pokeapi.co/api/v2/pokemon/?offset=${offset}&limit=${limit}`
 
   const fetchPokemonData = async () => {
     setLoading(true)
+    setError(null)
     try {
       const res = await fetch(API)
       const data = await res.json()
+
+      if (totalPokemon === 0) setTotalPokemon(data.count)
 
       const currPokemonData = data.results.map(
         async (currPokemon: currPokemon) => {
@@ -40,19 +49,30 @@ const App = () => {
     } catch (error) {
       console.log(error)
       setLoading(false)
-      setError(error)
+      setError(error as Error)
+    }
+  }
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage)
     }
   }
 
   useEffect(() => {
     fetchPokemonData()
-  }, [])
+  }, [page])
+
   return (
     <>
       <Header />
       <SearchPokemon />
       <PokeCardList pokemon={pokemon} loading={loading} error={error} />
-      <Pagination />
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </>
   )
 }

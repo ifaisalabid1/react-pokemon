@@ -3,8 +3,6 @@ import '@fontsource/poppins/500.css'
 import '@fontsource/poppins/600.css'
 import '@fontsource/poppins/700.css'
 import '@fontsource/poppins/800.css'
-import Header from './components/Header'
-import SearchPokemon from './components/SearchPokemon'
 import PokeCardList from './components/PokeCardList'
 import Pagination from './components/Pagination'
 import { useEffect, useState } from 'react'
@@ -19,7 +17,8 @@ const App = () => {
   const [error, setError] = useState<Error | null>(null)
   const [page, setPage] = useState(1)
   const [totalPokemon, setTotalPokemon] = useState(0)
-  const limit = 8
+
+  const limit = 20
   const totalPages = Math.ceil(totalPokemon / limit)
   const offset = limit * (page - 1)
 
@@ -65,8 +64,6 @@ const App = () => {
 
   return (
     <>
-      <Header />
-      <SearchPokemon />
       <PokeCardList pokemon={pokemon} loading={loading} error={error} />
       <Pagination
         currentPage={page}
